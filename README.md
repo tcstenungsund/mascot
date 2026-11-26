@@ -112,3 +112,9 @@ server does not answer. If you add or remove files, add them to the list in `sw.
 Add a line under `faces` in `config.js`. The bundled fonts cover Latin, Greek, Cyrillic, kana, fullwidth forms,
 box drawing, arrows and common symbols. A glyph outside those ranges falls back to a system font and
 may look off. Check every new face with `index.html?face=<name>`.
+
+## Licence
+
+Code and artwork: [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0). You may use, change and share
+it, but changed versions, including ones only run on a server for others to use, must be shared under the same
+licence. The bundled fonts in `fonts/` are Noto Sans subsets under the SIL Open Font License 1.1 (`fonts/OFL.txt`).
