@@ -336,7 +336,11 @@ function start(params) {
   document.documentElement.style.setProperty('--glow', color);
 
   const faceEl = document.getElementById('face');
-  const mascot = createMascot(CONFIG, Date.now());
+  // ?open=always ignores school hours, e.g. for the online demo visited from home in the evening.
+  const config = params.get('open') === 'always'
+    ? { ...CONFIG, schoolHours: { days: [1, 2, 3, 4, 5, 6, 7], from: '00:00', to: '24:00' } }
+    : CONFIG;
+  const mascot = createMascot(config, Date.now());
   const render = createView(faceEl);
   const update = () => render(mascot.tick(Date.now()));
 
@@ -495,6 +499,9 @@ function runTests() {
 
   m = createMascot(TEST, at(28, 10, 0));
   check(m.tick(at(28, 10, 0)).mode === 'asleep', 'asleep on a Saturday');
+  const always = { ...TEST, schoolHours: { days: [1, 2, 3, 4, 5, 6, 7], from: '00:00', to: '24:00' } };
+  m = createMascot(always, at(28, 23, 59, 59));
+  check(m.tick(at(28, 23, 59, 59)).mode === 'awake', '?open=always: awake on a Saturday night');
 
   m = createMascot(TEST, at(23, 11, 29, 59));
   check(is(m.tick(at(23, 11, 30)).face, 'hungry'), 'time-of-day moment: hungry at 11:30');

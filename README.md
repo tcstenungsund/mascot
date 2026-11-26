@@ -4,8 +4,8 @@ The AI mascot for Informations- och medieteknik / Informationsteknik, Teknikprog
 It is a neon-sign kaomoji that breathes, blinks, changes mood, greets passers-by, and falls asleep when
 nobody is around.
 
-**Live:** https://tcstenungsund.github.io/mascot/ (online it runs without the motion sensor, and follows
-the visitor's clock, so outside school hours it is asleep: move the mouse to see it stir, or add `?face=happy`).
+**Live:** https://tcstenungsund.github.io/mascot/?open=always (online it runs without the motion sensor;
+`?open=always` keeps it on school-day behaviour whatever the visitor's clock says).
 
 ## Files
 
@@ -25,6 +25,7 @@ Open `index.html` in Firefox. That's all; it runs from the file. Useful URLs:
 - `index.html?face=happy`: hold one face (any name from `config.js`)
 - `index.html?color=bla`: glow colour: `rosa` (default), `bla`, `gron`, `gul`
 - `index.html?auto=off`: just the home face, no random program
+- `index.html?open=always`: ignore school hours, always behave as during the school day (for demos)
 - `index.html?test`: runs the behaviour self-test
 
 Motion only works when the page is served by `presence.py` (below).
