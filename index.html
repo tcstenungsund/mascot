@@ -3,12 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Content Security Policy: a safety net in case untrusted text ever reaches the page as code. Only our
+       own files may load; data: images are the brick pattern; connect-src must include chat.ollama from
+       config.js (change both together). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self';
+    font-src 'self'; img-src 'self' data:; manifest-src 'self'; worker-src 'self';
+    connect-src 'self' http://127.0.0.1:11434; base-uri 'none'; form-action 'none'">
   <title>Maskot</title>
   <meta name="theme-color" content="#000000">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="mascot.css">
   <script src="config.js" defer></script>
+  <script src="prompt.js" defer></script>
   <script src="mascot.js" defer></script>
 </head>
 <body>
@@ -16,5 +23,14 @@
   <main>
     <p id="face" data-face="(・‿・)" role="img" aria-label="Maskoten: en neonskylt med ett kaomoji-ansikte">(・‿・)</p>
   </main>
+  <p class="hint" hidden>Skriv något för att prata med mig</p>
+  <section class="chat" aria-label="Chatta med maskoten" hidden>
+    <div class="log" aria-live="polite"></div>
+    <form>
+      <span class="sign" aria-hidden="true">&gt;</span>
+      <input name="question" autocomplete="off" spellcheck="false" aria-label="Fråga maskoten">
+    </form>
+    <footer role="status">Lokal AI – kan ha fel · Esc stänger och rensar</footer>
+  </section>
 </body>
 </html>

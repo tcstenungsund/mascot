@@ -12,11 +12,14 @@ nobody is around.
 | File | What it is |
 |------|-----------|
 | `index.html`, `mascot.css`, `mascot.js` | The live mascot |
-| `config.js` | **Edit this one**: faces, colours, school hours, sleep delay, daily moments, keys |
+| `prompt.js` | The local AI prompt (chat with Ollama on this computer) |
+| `config.js` | **Edit this one**: faces, colours, school hours, sleep delay, daily moments, keys, AI model and system prompt |
 | `presence.py` | Small local server and motion-sensor bridge (Raspberry Pi) |
 | `mascot.svg` | Print master (text already converted to paths) |
 | `fonts/` | Noto Sans subsets for the kaomoji glyphs, SIL OFL 1.1 (see `fonts/OFL.txt`) |
 | `manifest.webmanifest`, `sw.js`, `icons/` | PWA: app name and icons, offline cache |
+| `tests/` | Browser tests for the chat, accessibility and PWA (`tests/run.sh`) |
+| `ROADMAP.md` | Next steps, ideas, known quirks and things to keep in mind |
 
 ## Try it
 
@@ -97,6 +100,30 @@ The server only listens on 127.0.0.1, so other devices on the school network can
   Design Mode (Ctrl+Shift+M) for an exact 9:16 window, and Alt+number to change face on cue.
 - **Print / roll-up:** `mascot.svg` is vector with the text as paths; scale it freely in Inkscape or
   Scribus. Neon glow looks much weaker in CMYK than on screen, so do a test print first.
+
+
+## Local AI prompt
+
+On a computer running [Ollama](https://ollama.com) (MIT licence), the mascot is also the face of a local AI.
+Start typing and the sign moves up to make room for a chat; the mascot thinks, "talks" while the answer
+streams in, and looks happy when it is done.
+
+1. Install a model, e.g. `ollama pull qwen2.5:7b-instruct` (the default in `config.js`, about 5 GB).
+2. Run `python3 presence.py` and open `http://127.0.0.1:8000` (kiosk mode as above). The prompt only exists
+   there: from `file://`, online and on a computer without Ollama the mascot is just a mascot.
+3. Change `chat.model` or `chat.systemPrompt` in `config.js` to change the model or the mascot's personality.
+   If you change `chat.ollama` (Ollama's address), change `connect-src` in the Content Security Policy at the
+   top of `index.html` to match, or the browser blocks the chat.
+
+- **Privacy:** the conversation lives only in the page's memory. Esc, or 5 minutes without use, wipes it and
+  the mascot goes back to being a screensaver. Nothing is stored and nothing leaves the computer. 30 seconds
+  before the wipe, the footer warns, and any key keeps the chat open.
+- **Accessibility:** a hint under the sign tells visitors they can type to chat. Screen readers get each
+  answer once it is complete, and the wipe warning is announced.
+- **Speed:** the page loads the model when it starts and keeps it in memory (`chat.keepAlive: -1`), so
+  answers start within a second instead of after a ~30 s load. This uses about 6 GB of graphics memory.
+- **It can be wrong:** a small local model makes mistakes and the system prompt only steers it. The screen
+  says so ("Lokal AI – kan ha fel").
 
 ## Install as an app (PWA)
 

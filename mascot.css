@@ -90,9 +90,85 @@ body::after {
 
 main {
   perspective: 60vmin; /* depth for the head turn */
-  transition: opacity 3s ease;
+  transition: opacity 3s ease, transform 0.6s ease;
   animation: drift-x 430s ease-in-out infinite alternate; /* slow wander against screen burn-in */
 }
+
+/* ---------- Local AI prompt (prompt.js) ---------- */
+
+/* The sign moves up and shrinks to make room. transform is free here: the drift uses translate. */
+[data-chat] main { transform: translateY(-32vh) scale(0.45); }
+[data-chat] { cursor: auto; } /* the pointer is hidden on the screensaver, but needed to click or select text */
+
+/* "Write something to talk to me": fades in and out now and then, only when the AI is available.
+   Outside main, so it does not dim with the sleeping sign; at full strength it has 6.5:1 contrast. */
+.hint {
+  position: fixed;
+  inset: auto 0 9vh;
+  margin: 0;
+  text-align: center;
+  font: 1.1rem / 1.5 ui-monospace, "DejaVu Sans Mono", monospace;
+  color: #eee;
+  opacity: 0.6;
+  animation: hint 20s ease-in-out infinite;
+}
+[data-chat] .hint { display: none; }
+@keyframes hint {
+  0%, 55%, 100% { opacity: 0; }
+  12%, 43% { opacity: 0.6; }
+}
+
+.chat {
+  position: fixed;
+  inset: 32vh max(1rem, (100vw - 72ch) / 2) 1.5rem;
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  gap: 1rem;
+  font: 1.15rem / 1.5 ui-monospace, "DejaVu Sans Mono", monospace;
+  color: #eee;
+  text-shadow: 0 0 0.5em color-mix(in oklch, var(--glow) 45%, transparent);
+  animation: chat-in 0.4s ease;
+}
+.chat[hidden] { display: none; }
+
+.chat .log {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--glow) transparent;
+}
+.chat .you { color: color-mix(in oklch, var(--glow) 60%, #fff); }
+.chat .you::before { content: "> "; color: var(--glow); }
+.chat .sign { color: var(--glow); }
+.chat .answer { margin-block-end: 1.5rem; }
+.chat .error { color: #F2B640; }
+.chat p, .chat ul, .chat ol, .chat pre { margin-block: 0 0.6em; }
+.chat code { color: color-mix(in oklch, var(--glow) 50%, #fff); }
+.chat pre {
+  padding: 0.6em 0.8em;
+  border-inline-start: 2px solid var(--glow);
+  background: rgb(0 0 0 / 0.4);
+  overflow-x: auto;
+}
+
+.chat form {
+  display: flex;
+  gap: 1ch;
+  border-block-end: 1px solid var(--glow); /* full strength: 3.6:1, so the input is easy to find */
+}
+.chat input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  caret-color: var(--glow);
+  caret-shape: block; /* where supported */
+}
+.chat input:focus { outline: none; } /* the glowing underline and caret show the focus */
+.chat footer { font-size: 0.8rem; opacity: 0.6; }
+.chat footer.warn { color: #F2B640; opacity: 1; } /* "Rensas om 30 sekunder …" */
+
+@keyframes chat-in { from { opacity: 0; translate: 0 1rem; } }
 
 #face {
   position: relative;

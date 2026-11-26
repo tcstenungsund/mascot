@@ -597,8 +597,25 @@ function runTests() {
     check(straight, `blips never double back on their way from A to B (${w}×${h})`);
   }
 
+  // AI prompt helpers (prompt.js)
+  const parsed = parseChunks('{"message":{"content":"Hej"}}\n{"message":{"content":" där"}}\n{"mess');
+  check(parsed.pieces.join('') === 'Hej där' && parsed.rest === '{"mess', 'stream: complete lines read, partial line kept');
+  let threw = false;
+  try { parseChunks('{"error":"model not found"}\n'); } catch { threw = true; }
+  check(threw, 'stream: an Ollama error is raised, not shown as text');
+  const box = document.createElement('div');
+  box.append(renderMarkdown('Hej **du**\n\n- ett\n- två\n\n```\nlet x = 1;\n```\n<script>alert(1)</script>'));
+  check(box.querySelector('p > strong')?.textContent === 'du', 'markdown: **bold**');
+  check(box.querySelectorAll('ul > li').length === 2, 'markdown: list');
+  check(box.querySelector('pre > code')?.textContent.trim() === 'let x = 1;', 'markdown: code block');
+  check(!box.querySelector('script') && box.textContent.includes('<script>'), 'markdown: <script> stays harmless text');
+
   const failed = results.filter(r => r.startsWith('✗')).length;
-  document.body.innerHTML = `<pre class="test">${failed ? `${failed} FAILED` : 'All tests passed'}\n\n${results.join('\n')}</pre>`;
+  const report = Object.assign(document.createElement('pre'), {
+    className: 'test',
+    textContent: `${failed ? `${failed} FAILED` : 'All tests passed'}\n\n${results.join('\n')}`, // text, never HTML
+  });
+  document.body.replaceChildren(report);
 }
 
 const params = new URLSearchParams(location.search);

@@ -3,12 +3,13 @@
 // Network first: edits to config.js (or any file) show up on the next reload, and the cached copy is
 // only used when the server does not answer. Bump VERSION when files are added or removed.
 
-const VERSION = 'mascot-v1';
+const VERSION = 'mascot-v2';
 const FILES = [
   './',
   'index.html',
   'mascot.css',
   'mascot.js',
+  'prompt.js',
   'config.js',
   'manifest.webmanifest',
   'fonts/kaomoji-latin.woff2',

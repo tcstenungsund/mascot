@@ -21,10 +21,11 @@ const CONFIG = {
     cool:      ['(⌐■_■)'],
     love:      ['(♡‿♡)'],
     excited:   ['✧◝(⁰▿⁰)◜✧'],
-    // Meant for the future prompt mode: working on it / doesn't know / something went wrong
+    // Used by the AI prompt (and some by the idle program): working on it / doesn't know / went wrong
     determined: ['(•̀‿•́)✧'],
     shrug:     ['¯\\_(ツ)_/¯'],  // \\ is one backslash
     nervous:   ['(・_・;)'],
+    talking:   ['(・o・)'],     // mouth open; alternates with "home" while an answer streams in
     // Reactions on the page
     lookLeft:  ['(・‿・ )'],  // home face looking left: eyes shifted inside the brackets
     lookRight: ['( ・‿・)'],
@@ -73,5 +74,22 @@ const CONFIG = {
     1: 'home', 2: 'happy', 3: 'greet', 4: 'thinking', 5: 'surprised',
     6: 'party', 7: 'wink', 8: 'shrug', 9: 'cool',
     // Faces without a key can still be shown with ?face=name in the URL.
+  },
+
+  // Local AI prompt: only on the computer running Ollama, with the page opened at http://127.0.0.1:8000
+  // (python3 presence.py). Start typing to chat; Esc or closeAfterMinutes without use wipes the chat.
+  chat: {
+    ollama: 'http://127.0.0.1:11434',
+    model: 'qwen2.5:7b-instruct',   // any model from `ollama list`
+    closeAfterMinutes: 5,
+    // How long Ollama keeps the model in memory after use. Loading it takes up to ~30 s, so on a computer
+    // dedicated to the mascot keep it loaded: -1 = always. Use e.g. '30m' if the computer is used for more.
+    keepAlive: -1,
+    systemPrompt: `Du är neonmaskoten för programmen Informations- och medieteknik och Informationsteknik på \
+Teknikprogrammet, Nösnäsgymnasiet i Stenungsund. Du är en AI-modell som körs lokalt på den här datorn, \
+utan internet. Du pratar med elever som är 16–20 år.
+Svara på svenska, vänligt och med glimten i ögat, och håll svaren korta: högst några korta stycken.
+Var ärlig: om du inte vet eller är osäker, säg det. Hitta aldrig på fakta, källor eller siffror.
+Håll dig till sådant som passar i skolan.`,
   },
 };
