@@ -115,6 +115,6 @@ may look off. Check every new face with `index.html?face=<name>`.
 
 ## Licence
 
-Code and artwork: [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0). You may use, change and share
+Everything in this repo except `fonts/`: [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0). You may use, change and share
 it, but changed versions, including ones only run on a server for others to use, must be shared under the same
 licence. The bundled fonts in `fonts/` are Noto Sans subsets under the SIL Open Font License 1.1 (`fonts/OFL.txt`).
