@@ -1,0 +1,162 @@
+@font-face {
+  font-family: KaomojiLatin;
+  src: url("fonts/kaomoji-latin.woff2") format("woff2");
+  font-display: block;
+}
+@font-face {
+  font-family: KaomojiCJK;
+  src: url("fonts/kaomoji-cjk.woff2") format("woff2");
+  font-display: block;
+}
+
+:root {
+  --glow: #C70066; /* overwritten from config.js / ?color= */
+  --breath: 4s;
+  color-scheme: dark;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+/* The wall the neon sign hangs on. The profile has no near-black, so the wall is black with a hint of
+   the glow colour; the bricks are faint mortar lines. Everything here is static, so it is painted once. */
+body {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60'%3E%3Cpath d='M0 .5H120M0 30.5H120M.5 0V30M60.5 30V60' stroke='white' stroke-opacity='.07' fill='none'/%3E%3C/svg%3E")
+      0 0 / 14vmin 7vmin,
+    color-mix(in oklch, var(--glow) 6%, #000);
+  color: #fff;
+  cursor: none;
+}
+
+/* Light from the sign falling on the wall (dims with the sign), then darker corners on top. */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+/* How bright the light on the wall is (1 = awake). Registered so it can fade smoothly between modes. */
+@property --spill {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+body { transition: --spill 3s ease; }
+[data-mode="drowsy"] { --spill: 0.6; }
+[data-mode="asleep"] { --spill: 0.35; }
+[data-mode="brief"] { --spill: 0.7; }
+
+/* The light breathes in step with the sign: same duration (--breath) and curve as the glow keyframes. */
+body::before {
+  background: radial-gradient(ellipse 45% 40% at 50% 50%, color-mix(in oklch, var(--glow) 18%, transparent), transparent);
+  opacity: var(--spill); /* used as is when reduced motion turns the breathing off */
+  animation: spill var(--breath) ease-in-out infinite;
+}
+body::after {
+  background: radial-gradient(ellipse at center, transparent 40%, rgb(0 0 0 / 0.7));
+}
+
+/* Tron blips (drawn by mascot.js). In paint order this sits between the wall light (::before) and the
+   dark corners (::after), and it dims with the wall light when the mascot sleeps. */
+.blips {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--spill);
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blips .glow {
+  stroke: var(--glow);
+  stroke-width: 0.5vmin;
+  filter: drop-shadow(0 0 0.6vmin var(--glow));
+}
+.blips .core {
+  stroke: #fff;
+  stroke-width: 0.15vmin;
+}
+
+main {
+  perspective: 60vmin; /* depth for the head turn */
+  transition: opacity 3s ease;
+  animation: drift-x 430s ease-in-out infinite alternate; /* slow wander against screen burn-in */
+}
+
+#face {
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  /* --fit (≤ 1) is set by mascot.js to shrink extra-wide faces, e.g. the table flip */
+  font: 400 calc(min(11vw, 24vh) * var(--fit, 1)) / 1 KaomojiLatin, KaomojiCJK, sans-serif;
+  white-space: nowrap;
+  /* white-hot core of the neon tube */
+  text-shadow: 0 0 0.02em #fff, 0 0 0.06em #fff;
+  /* Head turn toward where it looks. --turn-x/y (-1…1) come from mascot.js. The breathing and drift
+     use the separate scale/translate properties, so they combine with this. */
+  transform:
+    rotateY(calc(var(--turn-x, 0) * 25deg))
+    rotateX(calc(var(--turn-y, 0) * -15deg));
+  transition: transform 0.4s ease-out;
+  animation:
+    breathe var(--breath) ease-in-out infinite,
+    flicker 17s linear infinite,
+    drift-y 610s ease-in-out infinite alternate;
+}
+
+/* Coloured glow: a blurred copy of the text behind it. Only its opacity animates, which is cheap
+   on a Raspberry Pi, instead of animating the blur itself. */
+#face::before {
+  content: attr(data-face);
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  color: var(--glow);
+  -webkit-text-stroke: 0.06em var(--glow); /* thickens the thin strokes so there is something to glow */
+  filter: blur(0.05em);
+  text-shadow:
+    0 0 0.05em var(--glow), 0 0 0.15em var(--glow),
+    0 0 0.3em var(--glow), 0 0 0.6em var(--glow);
+  animation: glow var(--breath) ease-in-out infinite;
+}
+
+[data-mode="drowsy"] main { opacity: 0.6; }
+[data-mode="asleep"] main { opacity: 0.35; }
+[data-mode="asleep"] { --breath: 8s; }
+[data-mode="brief"] main { opacity: 0.7; }
+
+@keyframes breathe { 50% { scale: 1.03; } }
+@keyframes glow { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+@keyframes spill { 0%, 100% { opacity: calc(var(--spill) * 0.6); } 50% { opacity: var(--spill); } }
+@keyframes flicker {
+  0%, 91%, 93%, 95%, 100% { opacity: 1; }
+  92% { opacity: 0.5; }
+  94% { opacity: 0.8; }
+}
+@keyframes drift-x { from { translate: -4vw 0; } to { translate: 4vw 0; } }
+@keyframes drift-y { from { translate: 0 -4vh; } to { translate: 0 4vh; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before {
+    animation: none !important;
+    transition: none !important;
+  }
+  #face { transform: none; }
+}
+
+/* index.html?test */
+.test {
+  font: 1rem / 1.5 monospace;
+  cursor: auto;
+}

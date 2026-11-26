@@ -1,0 +1,114 @@
+# Neon kaomoji mascot
+
+The AI mascot for Informations- och medieteknik / Informationsteknik, Teknikprogrammet, Nösnäsgymnasiet.
+It is a neon-sign kaomoji that breathes, blinks, changes mood, greets passers-by, and falls asleep when
+nobody is around.
+
+## Files
+
+| File | What it is |
+|------|-----------|
+| `index.html`, `mascot.css`, `mascot.js` | The live mascot |
+| `config.js` | **Edit this one**: faces, colours, school hours, sleep delay, daily moments, keys |
+| `presence.py` | Small local server and motion-sensor bridge (Raspberry Pi) |
+| `mascot.svg` | Print master (text already converted to paths) |
+| `fonts/` | Noto Sans subsets for the kaomoji glyphs, SIL OFL 1.1 (see `fonts/OFL.txt`) |
+| `manifest.webmanifest`, `sw.js`, `icons/` | PWA: app name and icons, offline cache |
+
+## Try it
+
+Open `index.html` in Firefox. That's all; it runs from the file. Useful URLs:
+
+- `index.html?face=happy`: hold one face (any name from `config.js`)
+- `index.html?color=bla`: glow colour: `rosa` (default), `bla`, `gron`, `gul`
+- `index.html?auto=off`: just the home face, no random program
+- `index.html?test`: runs the behaviour self-test
+
+Motion only works when the page is served by `presence.py` (below).
+
+## Behaviour
+
+- **School hours** (Mon–Fri 07:30–17:00): awake. It blinks, and now and then shows a random mood.
+  At set times it shows a special face (yawn 08:00, hungry 11:30, party Friday 15:00). Someone walking past
+  gets a wave, at most once a minute.
+- **5 minutes** with no input or motion: it yawns, dims, and falls asleep. Input or motion wakes it.
+- **Outside school hours:** asleep. Motion gives a short groggy "…?" before it dozes off again.
+
+## Interacting with it
+
+Only while it is awake (during school hours). Outside them, any input just gets the groggy face.
+
+| You do | It does |
+|--------|---------|
+| Move the mouse | Eyes and head turn toward the pointer (3D tilt), back to centre after 3 s |
+| Click / tap | Giggles `(≧▽≦)`; 3+ quick clicks make it dizzy `(@_@)`; 6+ and it flips the table |
+| Type ordinary keys | Listens `(・ω・)…` |
+| Nothing | Glances around by itself every 10–25 s, blinks, shows random moods. Every 1–2 min a Tron light zips along the bricks (dimmer while asleep; `blipEverySeconds` in `config.js`) |
+
+## Keyboard shortcuts
+
+| Key | Does |
+|-----|------|
+| `Alt`+`1`–`9` | Hold a face: home, happy, greet, thinking, surprised, party, wink, shrug, cool (mapping in `config.js`) |
+| `Esc` / `Alt`+`0` | Back to automatic |
+| `Alt`+`S` | Sleep now |
+
+The shortcuts use Alt so that ordinary typing only makes it listen.
+To try the daytime behaviour in the evening, temporarily set `schoolHours` in `config.js` to
+`days: [1, 2, 3, 4, 5, 6, 7], from: '00:00', to: '23:59'`.
+
+## Raspberry Pi 5 setup
+
+1. **Wire a PIR sensor** (e.g. HC-SR501): VCC → pin 2 (5 V), GND → pin 6, OUT → pin 11 (GPIO17).
+   The HC-SR501's output is 3.3 V, so it is safe for the Pi. Point it at the walkway, not at a window
+   or a radiator.
+2. **Copy this folder** to the Pi, e.g. `~/mascot`.
+3. **Set the time zone**, or school hours run an hour off:
+   `sudo raspi-config` → Localisation Options → Timezone → Europe → Stockholm.
+   Check with `date`.
+4. **Test:** `python3 ~/mascot/presence.py`, then open `http://127.0.0.1:8000` in Chromium and wave.
+   `curl 127.0.0.1:8000/presence` should count up. `gpiozero` comes with Raspberry Pi OS.
+5. **Autostart:** add these lines to `~/.config/labwc/autostart` (create the file if it is missing):
+
+   ```sh
+   python3 /home/pi/mascot/presence.py &
+   # Open the browser only once the server answers; a fixed delay can be too short on a cold boot.
+   (until curl -s http://127.0.0.1:8000/presence > /dev/null; do sleep 1; done
+    chromium --kiosk --noerrdialogs --disable-infobars http://127.0.0.1:8000) &
+   ```
+
+   Adjust `/home/pi` to the real user. On older images the browser command is `chromium-browser`.
+6. **Screen blanking off:** Raspberry Pi Configuration → Display → Screen Blanking: off
+   (or `sudo raspi-config` → Display Options → Screen Blanking).
+
+The server only listens on 127.0.0.1, so other devices on the school network cannot reach it.
+
+## Other uses
+
+- **Local-LLM computer:** same as the Pi, minus the sensor. Run it in kiosk mode, e.g.
+  `firefox --kiosk file:///path/to/mascot/index.html`. Without a sensor it wakes on keyboard and mouse.
+  A future prompt app can drive it with `mascot.setFace('thinking')` and `mascot.auto()`.
+  `mascot.blip()` in the browser console fires a Tron blip on cue, e.g. for a TikTok shot.
+- **TikTok / video:** record the browser window with OBS Studio (GPL) at 1080×1920. Use Firefox Responsive
+  Design Mode (Ctrl+Shift+M) for an exact 9:16 window, and Alt+number to change face on cue.
+- **Print / roll-up:** `mascot.svg` is vector with the text as paths; scale it freely in Inkscape or
+  Scribus. Neon glow looks much weaker in CMYK than on screen, so do a test print first.
+
+## Install as an app (PWA)
+
+The mascot is a Progressive Web App: it can be installed like an app, opens fullscreen with its own
+icon, and keeps working when the server is down (it then runs from its offline copy, without motion).
+
+1. Serve it with `python3 presence.py` (also works without a sensor). A PWA needs `http://`, so opening
+   `index.html` as a file works but cannot be installed or run offline.
+2. Open `http://127.0.0.1:8000` in Chromium and click the install icon in the address bar.
+   Firefox can't install web apps on Linux. GNOME Web (Epiphany) can.
+
+Edits to `config.js` and the other files show up on the next reload: the offline copy is only used when the
+server does not answer. If you add or remove files, add them to the list in `sw.js` and change `VERSION` there.
+
+## Adding faces
+
+Add a line under `faces` in `config.js`. The bundled fonts cover Latin, Greek, Cyrillic, kana, fullwidth forms,
+box drawing, arrows and common symbols. A glyph outside those ranges falls back to a system font and
+may look off. Check every new face with `index.html?face=<name>`.
