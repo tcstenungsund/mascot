@@ -105,7 +105,7 @@ async function startChat() {
   // gigabytes to load. Sent again when the chat opens, in case Ollama unloaded it in the meantime.
   const loadModel = () => fetch(`${ollama}/api/chat`, {
     method: 'POST',
-    body: JSON.stringify({ model, messages: [], keep_alive: keepAlive }),
+    body: JSON.stringify({ model, messages: [], keep_alive: keepAlive, think: false }),
   }).catch(() => {});
   loadModel();
 
@@ -194,6 +194,7 @@ async function startChat() {
           model,
           stream: true,
           keep_alive: keepAlive,
+          think: false, // thinking models (Gemma 4) would otherwise reason silently for ~20 s first
           messages: [{ role: 'system', content: systemPrompt }, ...history],
         }),
         signal: generation.signal,

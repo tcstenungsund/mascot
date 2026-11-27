@@ -80,7 +80,7 @@ const CONFIG = {
   // (python3 presence.py). Start typing to chat; Esc or closeAfterMinutes without use wipes the chat.
   chat: {
     ollama: 'http://127.0.0.1:11434',
-    model: 'qwen2.5:7b-instruct',   // any model from `ollama list`
+    model: 'gemma4:12b',   // any model from `ollama list`; ~8 GB graphics memory, fluent Swedish
     closeAfterMinutes: 5,
     // How long Ollama keeps the model in memory after use. Loading it takes up to ~30 s, so on a computer
     // dedicated to the mascot keep it loaded: -1 = always. Use e.g. '30m' if the computer is used for more.

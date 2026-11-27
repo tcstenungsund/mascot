@@ -108,7 +108,8 @@ On a computer running [Ollama](https://ollama.com) (MIT licence), the mascot is 
 Start typing and the sign moves up to make room for a chat; the mascot thinks, "talks" while the answer
 streams in, and looks happy when it is done.
 
-1. Install a model, e.g. `ollama pull qwen2.5:7b-instruct` (the default in `config.js`, about 5 GB).
+1. Install a model, e.g. `ollama pull gemma4:12b` (the default in `config.js`, about 8 GB; it writes much better
+   Swedish than e.g. Qwen 2.5 7B, which makes up words).
 2. Run `python3 presence.py` and open `http://127.0.0.1:8000` (kiosk mode as above). The prompt only exists
    there: from `file://`, online and on a computer without Ollama the mascot is just a mascot.
 3. Change `chat.model` or `chat.systemPrompt` in `config.js` to change the model or the mascot's personality.
@@ -121,7 +122,7 @@ streams in, and looks happy when it is done.
 - **Accessibility:** a hint under the sign tells visitors they can type to chat. Screen readers get each
   answer once it is complete, and the wipe warning is announced.
 - **Speed:** the page loads the model when it starts and keeps it in memory (`chat.keepAlive: -1`), so
-  answers start within a second instead of after a ~30 s load. This uses about 6 GB of graphics memory.
+  answers start within a second instead of after a ~30 s load. This uses about 8 GB of graphics memory.
 - **It can be wrong:** a small local model makes mistakes and the system prompt only steers it. The screen
   says so ("Lokal AI – kan ha fel").
 
