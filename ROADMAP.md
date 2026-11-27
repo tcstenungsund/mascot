@@ -16,6 +16,31 @@ what is untested, and what is worth knowing before the next round.
   Keep the "Lokal AI – kan ha fel" footer whatever the model.
 - **Test print** `mascot.svg` before ordering a roll-up: neon glow is much weaker in CMYK than on screen.
 
+## Audit 2026-11-27: next steps in order
+
+1. **Hand-over safety.** Move the system prompt and school facts out of `config.js` into a plain text file,
+   so colleagues can update facts without knowing JavaScript (B2). Show a visible message when `config.js`
+   has a typo instead of a silently frozen face (B1). Date the facts and update them every autumn (B3).
+2. **CI** (none today; Pages deploys `main` unchecked). One GitHub Actions workflow: `node --check`, compile
+   `presence.py`, run `index.html?test` in the runner's headless Chromium, check that every file in `sw.js`
+   exists. Then let Pages deploy from Actions, so the site only updates when the tests pass.
+3. **Chatbot.** Lower the temperature from Gemma's 1.0 to ~0.6 (fewer invented facts). Answer in the
+   language of the question, Swedish by default. A repeatable question set (`tests/ask.mjs`) with expected
+   words or "vet inte", to check model and prompt changes. Make sure colleagues stand behind "AI är en del
+   av alla kurser" before the bot tells parents.
+4. **Chat UX.** Text size that scales with the screen (`clamp()`; 1.15rem is small on a hall TV). A blinking
+   cursor in the answer until the first word (a cold start shows nothing for ~11 s). Only auto-scroll when
+   the reader is already at the bottom.
+5. **Code structure, before the next big feature.** ES modules instead of classic scripts and globals
+   (`file://` would then only work via `presence.py`; it only gives the screensaver today anyway). Move the
+   self-test out of `mascot.js` (165 of 655 lines). Split `prompt.js` into an Ollama client and a chat view.
+   Small: let one place own the keyboard (two listeners react to the same keys today); `cache.put` inside
+   `event.waitUntil` in `sw.js`; a question typed right after Esc mid-answer is silently ignored.
+
+Checked and fine: no dependencies, CSP, no `innerHTML`, servers on 127.0.0.1 only, chat memory-only, jailbreak
+and harmful requests refused in tests. Accepted risk: a determined pupil may still coax out an embarrassing
+answer; the footer and the wipe are the mitigation.
+
 ## Ideas, not decided
 
 - **Lock down the kiosk browser** (security audit, finding 1; postponed 2026-11-27, not needed for now). In kiosk mode Chromium can still open developer
