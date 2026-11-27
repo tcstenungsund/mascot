@@ -7,12 +7,6 @@ what is untested, and what is worth knowing before the next round.
 
 - **Name the mascot.** A good task for the pupils. Then add the name to `chat.systemPrompt` in `config.js`,
   and consider a Montserrat wordmark (the school's typeface) for print and TikTok.
-- **Lock down the kiosk browser** (security audit, finding 1). In kiosk mode Chromium can still open developer
-  tools (Ctrl+Shift+I), and from there anyone at the keyboard can use Ollama's whole API (delete models,
-  download new ones until the disk is full) or browse anywhere. Fix with a policy file on each kiosk, e.g.
-  `/etc/chromium/policies/managed/mascot.json`:
-  `{"DeveloperToolsAvailability": 2, "URLBlocklist": ["*"], "URLAllowlist": ["127.0.0.1:8000"]}`.
-  Check the exact path for the Chromium build used (Raspberry Pi OS / Flatpak differ), test, add to README.
 - **Try it on the real Raspberry Pi 5.** Not tested yet: animation smoothness (glow, 3D head turn, blips),
   the PIR sensor, the labwc autostart, Chromium kiosk mode, and screen blanking. If the Pi struggles, the
   `filter: blur()` on the glow layer is the first thing to simplify.
@@ -24,6 +18,12 @@ what is untested, and what is worth knowing before the next round.
 
 ## Ideas, not decided
 
+- **Lock down the kiosk browser** (security audit, finding 1; postponed 2026-11-27, not needed for now). In kiosk mode Chromium can still open developer
+  tools (Ctrl+Shift+I), and from there anyone at the keyboard can use Ollama's whole API (delete models,
+  download new ones until the disk is full) or browse anywhere. Fix with a policy file on each kiosk, e.g.
+  `/etc/chromium/policies/managed/mascot.json`:
+  `{"DeveloperToolsAvailability": 2, "URLBlocklist": ["*"], "URLAllowlist": ["127.0.0.1:8000"]}`.
+  Check the exact path for the Chromium build used (Raspberry Pi OS / Flatpak differ), test, add to README.
 - **Touch to chat** (accessibility audit, finding 6): only needed if a kiosk gets a touchscreen without a
   keyboard. A tap would open the chat and focus the input so the on-screen keyboard appears.
 - **Special-date calendar**: faces for Lucia, Christmas, exam week, open house, summer break (skipped in v1).
