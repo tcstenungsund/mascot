@@ -1,6 +1,6 @@
 # Roadmap and notes
 
-Status as of 2026-11-26. What is done is described in the [README](README.md); this file is what is left,
+Status as of 2026-11-27. What is done is described in the [README](README.md); this file is what is left,
 what is untested, and what is worth knowing before the next round.
 
 ## Next steps
@@ -36,7 +36,7 @@ what is untested, and what is worth knowing before the next round.
   a face is held, so one is overdue. It reads like a goodbye, so it was left as is.
 - On GitHub Pages the mascot follows the visitor's clock, so evenings and weekends it sleeps. Share the link
   with `?open=always`.
-- `chat.keepAlive: -1` keeps the model in graphics memory (~6 GB) for good. Use `'30m'` if the computer is
+- `chat.keepAlive: -1` keeps the model in graphics memory (~8 GB) for good. Use `'30m'` if the computer is
   used for anything else.
 
 ## Things to keep in mind
