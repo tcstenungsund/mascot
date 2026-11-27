@@ -251,6 +251,16 @@ main {
   #face { transform: none; }
 }
 
+/* config.js could not be read (mascot.js): shown instead of a silently frozen face */
+.config-error {
+  position: fixed;
+  inset: auto 1rem 2rem;
+  margin: 0;
+  text-align: center;
+  font: 1.2rem / 1.5 ui-monospace, "DejaVu Sans Mono", monospace;
+  color: #F2B640;
+}
+
 /* index.html?test */
 .test {
   font: 1rem / 1.5 monospace;

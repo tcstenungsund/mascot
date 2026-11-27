@@ -14,9 +14,10 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="mascot.css">
+  <!-- mascot.js first, so it can report a typo in config.js; everything starts on DOMContentLoaded -->
+  <script src="mascot.js" defer></script>
   <script src="config.js" defer></script>
   <script src="prompt.js" defer></script>
-  <script src="mascot.js" defer></script>
 </head>
 <body>
   <svg class="blips" aria-hidden="true"></svg>

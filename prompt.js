@@ -5,8 +5,7 @@
 //
 // Only switches itself on when the page is served from this computer (http://127.0.0.1 or localhost)
 // and Ollama answers. Online (GitHub Pages), from file:// or on the Pi it never appears.
-// Loaded before mascot.js so the self-test can use the helpers; starts on DOMContentLoaded, when
-// mascot.js has set up window.mascot.
+// Starts on DOMContentLoaded, after mascot.js (whose listener was added first) has set up window.mascot.
 
 // ---------- Helpers (no page access, tested in index.html?test) ----------
 
@@ -93,7 +92,7 @@ function renderMarkdown(text) {
 
 async function startChat() {
   const chat = document.querySelector('.chat');
-  if (!chat || !['127.0.0.1', 'localhost'].includes(location.hostname)) return;
+  if (!chat || typeof CONFIG === 'undefined' || !['127.0.0.1', 'localhost'].includes(location.hostname)) return;
   const { ollama, model, keepAlive, contextTokens, promptFile } = CONFIG.chat;
   const options = { num_ctx: contextTokens };
   try {

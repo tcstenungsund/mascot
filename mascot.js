@@ -650,6 +650,24 @@ function runTests() {
   document.body.replaceChildren(report);
 }
 
-const params = new URLSearchParams(location.search);
-if (params.has('test')) runTests();
-else start(params);
+// config.js is edited by hand. If it has a typo, say so on screen instead of showing a frozen face.
+// This script loads before config.js, so it sees the error and where it is.
+let configError = '';
+addEventListener('error', event => {
+  // From file:// some browsers hide the details (line 0, "Script error."): then just name the file.
+  if (event.filename?.endsWith('/config.js') && event.lineno) configError = ` kring rad ${event.lineno} (${event.message})`;
+});
+
+addEventListener('DOMContentLoaded', () => {
+  if (typeof CONFIG === 'undefined') {
+    document.body.append(Object.assign(document.createElement('p'), {
+      className: 'config-error',
+      role: 'alert',
+      textContent: `config.js har ett fel${configError}. Rätta felet och ladda om sidan.`,
+    }));
+    return;
+  }
+  const params = new URLSearchParams(location.search);
+  if (params.has('test')) runTests();
+  else start(params);
+});
