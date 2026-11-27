@@ -19,7 +19,7 @@ nobody is around.
 | `mascot.svg` | Print master (text already converted to paths) |
 | `fonts/` | Noto Sans subsets for the kaomoji glyphs, SIL OFL 1.1 (see `fonts/OFL.txt`) |
 | `manifest.webmanifest`, `sw.js`, `icons/` | PWA: app name and icons, offline cache |
-| `tests/` | Browser tests for the chat, accessibility and PWA (`tests/run.sh`) |
+| `tests/` | `ci.sh`: the checks GitHub runs on every push. `run.sh`: browser tests for the chat, accessibility and PWA |
 | `ROADMAP.md` | Next steps, ideas, known quirks and things to keep in mind |
 
 ## Try it

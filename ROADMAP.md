@@ -20,9 +20,8 @@ what is untested, and what is worth knowing before the next round.
 
 1. ~~**Hand-over safety.**~~ Done: the prompt and facts are in `ai-prompt.md` (dated on its first line, so
    update them every autumn), and a typo in `config.js` is shown on screen with its line.
-2. **CI** (none today; Pages deploys `main` unchecked). One GitHub Actions workflow: `node --check`, compile
-   `presence.py`, run `index.html?test` in the runner's headless Chromium, check that every file in `sw.js`
-   exists. Then let Pages deploy from Actions, so the site only updates when the tests pass.
+2. ~~**CI.**~~ Done: `.github/workflows/ci.yml` runs `tests/ci.sh` (syntax, the `sw.js` file list, the
+   self-test in headless Chrome) on every push, and Pages deploys only when it passes.
 3. **Chatbot.** Lower the temperature from Gemma's 1.0 to ~0.6 (fewer invented facts). Answer in the
    language of the question, Swedish by default. A repeatable question set (`tests/ask.mjs`) with expected
    words or "vet inte", to check model and prompt changes. Make sure colleagues stand behind "AI är en del
@@ -67,7 +66,8 @@ answer; the footer and the wipe are the mitigation.
 
 - **Changing Ollama's address** (`chat.ollama`) also needs `connect-src` in the Content Security Policy at the
   top of `index.html`, or the browser blocks the chat.
-- **Adding or removing files** needs the list in `sw.js` updated and `VERSION` bumped.
+- **Adding or removing files** needs the list in `sw.js` updated and `VERSION` bumped (CI fails if a file
+  the page uses is missing from the list).
 - **New faces**: check them with `index.html?face=<name>`. Glyphs outside the bundled font ranges fall back
   to a system font. To add ranges, re-subset the Noto fonts with `pyftsubset` (fontTools).
 - **Shared web origin**: all GitHub Pages sites in the `tcstenungsund` organisation share
@@ -79,6 +79,7 @@ answer; the footer and the wipe are the mitigation.
 
 ## Testing
 
+- `tests/ci.sh`: what GitHub Actions runs on every push; also runs locally (see the script's first lines).
 - `index.html?test`: the behaviour self-test (state machine, keys, config edge cases, blip routes, the
   chat's stream parser and Markdown formatter). Runs in any browser, also from `file://`.
 - `tests/run.sh chat|a11y|pwa`: browser tests over the Chrome DevTools Protocol (Node 22+, Ungoogled Chromium
