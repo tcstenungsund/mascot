@@ -94,7 +94,8 @@ function renderMarkdown(text) {
 async function startChat() {
   const chat = document.querySelector('.chat');
   if (!chat || !['127.0.0.1', 'localhost'].includes(location.hostname)) return;
-  const { ollama, model, systemPrompt, keepAlive } = CONFIG.chat;
+  const { ollama, model, systemPrompt, keepAlive, contextTokens } = CONFIG.chat;
+  const options = { num_ctx: contextTokens };
   try {
     const response = await fetch(`${ollama}/api/version`, { signal: AbortSignal.timeout(2000) });
     if (!response.ok) return;
@@ -105,7 +106,7 @@ async function startChat() {
   // gigabytes to load. Sent again when the chat opens, in case Ollama unloaded it in the meantime.
   const loadModel = () => fetch(`${ollama}/api/chat`, {
     method: 'POST',
-    body: JSON.stringify({ model, messages: [], keep_alive: keepAlive, think: false }),
+    body: JSON.stringify({ model, messages: [], keep_alive: keepAlive, think: false, options }),
   }).catch(() => {});
   loadModel();
 
@@ -194,6 +195,7 @@ async function startChat() {
           model,
           stream: true,
           keep_alive: keepAlive,
+          options, // the same as when loading, or Ollama reloads the model
           think: false, // thinking models (Gemma 4) would otherwise reason silently for ~20 s first
           messages: [{ role: 'system', content: systemPrompt }, ...history],
         }),

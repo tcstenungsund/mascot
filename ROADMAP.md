@@ -16,9 +16,10 @@ what is untested, and what is worth knowing before the next round.
 - **Try it on the real Raspberry Pi 5.** Not tested yet: animation smoothness (glow, 3D head turn, blips),
   the PIR sensor, the labwc autostart, Chromium kiosk mode, and screen blanking. If the Pi struggles, the
   `filter: blur()` on the glow layer is the first thing to simplify.
-- **Tune the AI.** `qwen2.5:7b-instruct` writes decent but imperfect Swedish (e.g. "ett stegvis förslag" for
-  an algorithm). Try a few questions with pupils, adjust `chat.systemPrompt`, and compare other models that
-  fit in 12 GB of graphics memory. Keep the "Lokal AI – kan ha fel" footer whatever the model.
+- **Tune the AI.** Switched to `gemma4:12b` (fluent Swedish; Qwen 2.5 7B made up words) with `think: false`.
+  `chat.systemPrompt` now holds the school facts from the autumn 2026 brochures (`contextTokens: 8192` makes room). Try real
+  questions with pupils, check it admits what it doesn't know, and update the facts when the offer changes.
+  Keep the "Lokal AI – kan ha fel" footer whatever the model.
 - **Test print** `mascot.svg` before ordering a roll-up: neon glow is much weaker in CMYK than on screen.
 
 ## Ideas, not decided

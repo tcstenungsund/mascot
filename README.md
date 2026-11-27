@@ -113,6 +113,8 @@ streams in, and looks happy when it is done.
 2. Run `python3 presence.py` and open `http://127.0.0.1:8000` (kiosk mode as above). The prompt only exists
    there: from `file://`, online and on a computer without Ollama the mascot is just a mascot.
 3. Change `chat.model` or `chat.systemPrompt` in `config.js` to change the model or the mascot's personality.
+   The system prompt also holds the facts about the programme (from the brochures): the model knows nothing
+   about the school except what is written there, so update it when courses or rules change.
    If you change `chat.ollama` (Ollama's address), change `connect-src` in the Content Security Policy at the
    top of `index.html` to match, or the browser blocks the chat.
 
