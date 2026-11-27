@@ -13,7 +13,8 @@ nobody is around.
 |------|-----------|
 | `index.html`, `mascot.css`, `mascot.js` | The live mascot |
 | `prompt.js` | The local AI prompt (chat with Ollama on this computer) |
-| `config.js` | **Edit this one**: faces, colours, school hours, sleep delay, daily moments, keys, AI model and system prompt |
+| `config.js` | **Edit this one**: faces, colours, school hours, sleep delay, daily moments, keys, AI model |
+| `ai-prompt.md` | What the AI knows and how it answers: plain Swedish text, school facts included. Anyone can edit it |
 | `presence.py` | Small local server and motion-sensor bridge (Raspberry Pi) |
 | `mascot.svg` | Print master (text already converted to paths) |
 | `fonts/` | Noto Sans subsets for the kaomoji glyphs, SIL OFL 1.1 (see `fonts/OFL.txt`) |
@@ -112,9 +113,10 @@ streams in, and looks happy when it is done.
    Swedish than e.g. Qwen 2.5 7B, which makes up words).
 2. Run `python3 presence.py` and open `http://127.0.0.1:8000` (kiosk mode as above). The prompt only exists
    there: from `file://`, online and on a computer without Ollama the mascot is just a mascot.
-3. Change `chat.model` or `chat.systemPrompt` in `config.js` to change the model or the mascot's personality.
-   The system prompt also holds the facts about the programme (from the brochures): the model knows nothing
-   about the school except what is written there, so update it when courses or rules change.
+3. Change `chat.model` in `config.js` to change the model. What the mascot knows and how it answers is in
+   `ai-prompt.md`, plain text that needs no programming. The model knows nothing about the school except what
+   is written there, so update it when courses or rules change (and the date on its first line). Edits apply
+   the next time the chat opens.
    If you change `chat.ollama` (Ollama's address), change `connect-src` in the Content Security Policy at the
    top of `index.html` to match, or the browser blocks the chat.
 
@@ -138,7 +140,8 @@ icon, and keeps working when the server is down (it then runs from its offline c
 2. Open `http://127.0.0.1:8000` in Chromium and click the install icon in the address bar.
    Firefox can't install web apps on Linux. GNOME Web (Epiphany) can.
 
-Edits to `config.js` and the other files show up on the next reload: the offline copy is only used when the
+If `config.js` gets a typo (a missing comma or quote), the mascot says so at the bottom of the screen, with
+the line. Edits to `config.js` and the other files show up on the next reload: the offline copy is only used when the
 server does not answer. If you add or remove files, add them to the list in `sw.js` and change `VERSION` there.
 
 ## Adding faces

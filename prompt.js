@@ -94,13 +94,26 @@ function renderMarkdown(text) {
 async function startChat() {
   const chat = document.querySelector('.chat');
   if (!chat || !['127.0.0.1', 'localhost'].includes(location.hostname)) return;
-  const { ollama, model, systemPrompt, keepAlive, contextTokens } = CONFIG.chat;
+  const { ollama, model, keepAlive, contextTokens, promptFile } = CONFIG.chat;
   const options = { num_ctx: contextTokens };
   try {
     const response = await fetch(`${ollama}/api/version`, { signal: AbortSignal.timeout(2000) });
     if (!response.ok) return;
   } catch {
     return; // no Ollama on this computer: the mascot stays a mascot
+  }
+  // The instructions and school facts. Read again each time the chat opens, so edits to the file apply
+  // without restarting the screen; if a re-read fails, the last good copy is used.
+  const loadPrompt = () => fetch(promptFile, { cache: 'no-store' }).then(response => {
+    if (!response.ok) throw new Error(`${promptFile}: ${response.status}`);
+    return response.text();
+  });
+  let systemPrompt;
+  try {
+    systemPrompt = await loadPrompt();
+  } catch (error) {
+    console.error(`No AI chat: could not read its instructions (${error.message})`);
+    return; // without its facts the model would make things up about the school
   }
   // Load the model into memory now (an empty chat only loads it), so the first visitor does not wait for
   // gigabytes to load. Sent again when the chat opens, in case Ollama unloaded it in the meantime.
@@ -148,6 +161,7 @@ async function startChat() {
     document.body.dataset.chat = '';
     face('listening');
     loadModel();
+    loadPrompt().then(text => (systemPrompt = text), () => {});
     keepOpen();
   }
 

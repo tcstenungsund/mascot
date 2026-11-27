@@ -5,22 +5,21 @@ what is untested, and what is worth knowing before the next round.
 
 ## Next steps
 
-- **Name the mascot.** A good task for the pupils. Then add the name to `chat.systemPrompt` in `config.js`,
+- **Name the mascot.** A good task for the pupils. Then add the name to `ai-prompt.md`,
   and consider a Montserrat wordmark (the school's typeface) for print and TikTok.
 - **Try it on the real Raspberry Pi 5.** Not tested yet: animation smoothness (glow, 3D head turn, blips),
   the PIR sensor, the labwc autostart, Chromium kiosk mode, and screen blanking. If the Pi struggles, the
   `filter: blur()` on the glow layer is the first thing to simplify.
 - **Tune the AI.** Switched to `gemma4:12b` (fluent Swedish; Qwen 2.5 7B made up words) with `think: false`.
-  `chat.systemPrompt` now holds the school facts from the autumn 2026 brochures (`contextTokens: 8192` makes room). Try real
+  `ai-prompt.md` now holds the school facts from the autumn 2026 brochures (`contextTokens: 8192` makes room). Try real
   questions with pupils, check it admits what it doesn't know, and update the facts when the offer changes.
   Keep the "Lokal AI – kan ha fel" footer whatever the model.
 - **Test print** `mascot.svg` before ordering a roll-up: neon glow is much weaker in CMYK than on screen.
 
 ## Audit 2026-11-27: next steps in order
 
-1. **Hand-over safety.** Move the system prompt and school facts out of `config.js` into a plain text file,
-   so colleagues can update facts without knowing JavaScript (B2). Show a visible message when `config.js`
-   has a typo instead of a silently frozen face (B1). Date the facts and update them every autumn (B3).
+1. ~~**Hand-over safety.**~~ Done: the prompt and facts are in `ai-prompt.md` (dated on its first line, so
+   update them every autumn), and a typo in `config.js` is shown on screen with its line.
 2. **CI** (none today; Pages deploys `main` unchecked). One GitHub Actions workflow: `node --check`, compile
    `presence.py`, run `index.html?test` in the runner's headless Chromium, check that every file in `sw.js`
    exists. Then let Pages deploy from Actions, so the site only updates when the tests pass.
