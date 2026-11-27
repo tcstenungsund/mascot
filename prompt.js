@@ -93,8 +93,8 @@ function renderMarkdown(text) {
 async function startChat() {
   const chat = document.querySelector('.chat');
   if (!chat || typeof CONFIG === 'undefined' || !['127.0.0.1', 'localhost'].includes(location.hostname)) return;
-  const { ollama, model, keepAlive, contextTokens, promptFile } = CONFIG.chat;
-  const options = { num_ctx: contextTokens };
+  const { ollama, model, keepAlive, contextTokens, temperature, promptFile } = CONFIG.chat;
+  const options = { num_ctx: contextTokens, temperature };
   try {
     const response = await fetch(`${ollama}/api/version`, { signal: AbortSignal.timeout(2000) });
     if (!response.ok) return;

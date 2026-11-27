@@ -88,6 +88,9 @@ const CONFIG = {
     // Room for the system prompt plus the conversation, in tokens. Ollama's default (4096) is too small for
     // the facts in promptFile: the model would silently forget them. More context uses more graphics memory.
     contextTokens: 8192,
+    // How freely the model picks its words: 0 = always the most likely word, 1 = Gemma's default (creative).
+    // Lower makes it stick to the facts in promptFile; too low and the answers turn stiff and repetitive.
+    temperature: 0.6,
     // The mascot's instructions and everything it knows about the school: a plain text file in this folder,
     // so anyone can update the facts without touching code. It is read again every time the chat opens.
     promptFile: 'ai-prompt.md',
