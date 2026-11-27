@@ -116,7 +116,8 @@ streams in, and looks happy when it is done.
 3. Change `chat.model` in `config.js` to change the model. What the mascot knows and how it answers is in
    `ai-prompt.md`, plain text that needs no programming. The model knows nothing about the school except what
    is written there, so update it when courses or rules change (and the date on its first line). Edits apply
-   the next time the chat opens.
+   the next time the chat opens. Afterwards, run `node tests/ask.mjs 3`: it asks 15 test questions and checks
+   that the answers still hold.
    If you change `chat.ollama` (Ollama's address), change `connect-src` in the Content Security Policy at the
    top of `index.html` to match, or the browser blocks the chat.
 

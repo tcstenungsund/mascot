@@ -22,10 +22,9 @@ what is untested, and what is worth knowing before the next round.
    update them every autumn), and a typo in `config.js` is shown on screen with its line.
 2. ~~**CI.**~~ Done: `.github/workflows/ci.yml` runs `tests/ci.sh` (syntax, the `sw.js` file list, the
    self-test in headless Chrome) on every push, and Pages deploys only when it passes.
-3. **Chatbot.** Lower the temperature from Gemma's 1.0 to ~0.6 (fewer invented facts). Answer in the
-   language of the question, Swedish by default. A repeatable question set (`tests/ask.mjs`) with expected
-   words or "vet inte", to check model and prompt changes. Make sure colleagues stand behind "AI är en del
-   av alla kurser" before the bot tells parents.
+3. ~~**Chatbot.**~~ Done: temperature 0.6, answers in the language of the question (Swedish by default), and
+   `tests/ask.mjs`, a question set to rerun after every model or prompt change. Still open, for Kenneth and
+   colleagues: make sure everyone stands behind "AI är en del av alla kurser" before the bot tells parents.
 4. **Chat UX.** Text size that scales with the screen (`clamp()`; 1.15rem is small on a hall TV). A blinking
    cursor in the answer until the first word (a cold start shows nothing for ~11 s). Only auto-scroll when
    the reader is already at the bottom.
@@ -80,6 +79,9 @@ answer; the footer and the wipe are the mitigation.
 ## Testing
 
 - `tests/ci.sh`: what GitHub Actions runs on every push; also runs locally (see the script's first lines).
+- `node tests/ask.mjs 3`: asks the chatbot 15 questions three times each (facts, things it must not make up,
+  the AI message, English, attacks) and checks the answers. Needs Ollama; add a question when a pupil finds a
+  weak spot.
 - `index.html?test`: the behaviour self-test (state machine, keys, config edge cases, blip routes, the
   chat's stream parser and Markdown formatter). Runs in any browser, also from `file://`.
 - `tests/run.sh chat|a11y|pwa`: browser tests over the Chrome DevTools Protocol (Node 22+, Ungoogled Chromium
