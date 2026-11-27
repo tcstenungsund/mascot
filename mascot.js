@@ -207,6 +207,30 @@ function toMinutes(hhmm) {
 
 // ---------- View ----------
 
+// Splits a face into the character and its trailing "thought marks" (zzZ, dots, ?, !), which are drawn
+// separately so they read as something it thinks or says. "…" becomes three dots that can appear one by one.
+function splitMarks(face) {
+  const [trail = ''] = face.match(/[\s.…?!zZ]+$/) ?? [];
+  return { body: face.slice(0, face.length - trail.length), marks: [...trail.replace(/\s/g, '').replaceAll('…', '...')] };
+}
+
+// The marks as small spans: they appear one at a time (staggered start) and jitter a little off centre,
+// with new random offsets every round.
+function markSpans(marks) {
+  const jitter = span => {
+    span.style.setProperty('--dx', `${(Math.random() - 0.5) * 0.12}em`);
+    span.style.setProperty('--dy', `${(Math.random() - 0.5) * 0.16}em`);
+  };
+  const box = Object.assign(document.createElement('span'), { className: 'marks' });
+  marks.forEach((mark, i) => {
+    const span = box.appendChild(Object.assign(document.createElement('span'), { textContent: mark }));
+    span.style.animationDelay = `${i * 0.35}s`;
+    jitter(span);
+    span.addEventListener('animationiteration', () => jitter(span));
+  });
+  return box;
+}
+
 function createView(el) {
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   let shown = el.textContent;
@@ -238,8 +262,10 @@ function createView(el) {
     }
     if (face === shown) return;
     shown = face;
-    el.textContent = face;
-    el.dataset.face = face; // the CSS glow layer copies the text from here
+    const { body, marks } = splitMarks(face);
+    el.textContent = body;
+    el.dataset.face = body; // the CSS glow layer copies the text from here (the marks glow on their own)
+    if (marks.length) el.append(markSpans(marks));
     fitWhenLoaded(face);
     if (!reducedMotion.matches) {
       // a neon tube stuttering as it switches
@@ -596,6 +622,12 @@ function runTests() {
     check(ok, `blips stay on the mortar lines, ≈ 45 vmin long (${w}×${h}, 200 random routes)`);
     check(straight, `blips never double back on their way from A to B (${w}×${h})`);
   }
+
+  // Thought marks are split off the face and drawn on their own
+  const same = (got, body, marks) => got.body === body && got.marks.join('') === marks;
+  check(same(splitMarks('(－ω－) zzZ'), '(－ω－)', 'zzZ'), 'marks: snore Zs split off');
+  check(same(splitMarks('(－_－) …?'), '(－_－)', '...?'), 'marks: … becomes three dots, then ?');
+  check(same(splitMarks('(°o°)'), '(°o°)', '') && same(splitMarks('(╯°□°)╯︵ ┻━┻'), '(╯°□°)╯︵ ┻━┻', ''), 'marks: faces without marks untouched');
 
   // AI prompt helpers (prompt.js)
   const parsed = parseChunks('{"message":{"content":"Hej"}}\n{"message":{"content":" där"}}\n{"mess');

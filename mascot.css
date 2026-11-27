@@ -207,6 +207,26 @@ main {
   animation: glow var(--breath) ease-in-out infinite;
 }
 
+/* Thought marks (zzZ, dots, ?) after a face: smaller, softer glow, appearing one at a time and jittering a
+   little off centre (random --dx/--dy from mascot.js), so they read as thought or speech, not as the face. */
+#face .marks {
+  margin-inline-start: 0.2em;
+  font-size: 0.6em;
+  text-shadow: 0 0 0.05em #fff, 0 0 0.25em var(--glow), 0 0 0.5em var(--glow);
+}
+#face .marks span {
+  display: inline-block;
+  animation: mark 2.8s ease-in-out infinite backwards; /* backwards: stay hidden until its turn */
+}
+[data-mode="asleep"] #face .marks span { animation-duration: 4.2s; }
+@keyframes mark {
+  0% { opacity: 0; translate: 0 0; }
+  12% { opacity: 1; translate: var(--dx) var(--dy); }
+  40% { translate: calc(var(--dx) * -0.6) calc(var(--dy) * -0.6); }
+  65% { opacity: 1; translate: var(--dx) calc(var(--dy) * 0.5); }
+  85%, 100% { opacity: 0; translate: 0 0; }
+}
+
 [data-mode="drowsy"] main { opacity: 0.6; }
 [data-mode="asleep"] main { opacity: 0.35; }
 [data-mode="asleep"] { --breath: 8s; }
